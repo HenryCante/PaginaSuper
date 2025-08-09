@@ -83,64 +83,10 @@
 
         <!-- Productos -->
         <div class="col-sm-9">
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <!-- Repetimos esta card para 6 productos -->
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="img/Apple.png" class="card-img-top" alt="Manzana">
-                        <div class="card-body text-center">
-                            <h6 class="card-title">Manzana</h6>
-                            <button class="btn btn-primary">Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="img/Watermelon.png" class="card-img-top" alt="Sandía">
-                        <div class="card-body text-center">
-                            <h6 class="card-title">Sandía</h6>
-                            <button class="btn btn-primary">Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="img/Grape.png" class="card-img-top" alt="Uva">
-                        <div class="card-body text-center">
-                            <h6 class="card-title">Uva</h6>
-                            <button class="btn btn-primary">Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="img/Pineapple.png" class="card-img-top" alt="Piña">
-                        <div class="card-body text-center">
-                            <h6 class="card-title">Piña</h6>
-                            <button class="btn btn-primary">Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="img/Peach.png" class="card-img-top" alt="Melocotón">
-                        <div class="card-body text-center">
-                            <h6 class="card-title">Melocotón</h6>
-                            <button class="btn btn-primary">Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="img/Melon.png" class="card-img-top" alt="Melón">
-                        <div class="card-body text-center">
-                            <h6 class="card-title">Melón</h6>
-                            <button class="btn btn-primary">Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="row" id="contenedorProductos">
+          <!-- Aquí se insertan los productos -->
         </div>
+      </div>
     </div>
 </div>
 
@@ -148,6 +94,58 @@
 <footer class="text-center mt-5 p-3 bg-light">
     Diseñado por: Henry Yoshuá Canté de León - 1890-22-3895
 </footer>
+
+<script>
+  const url = "https://backcvbgtmdesa.azurewebsites.net/api/productos";
+  const contenedor = document.getElementById("contenedorProductos");
+  const contadorCarrito = document.getElementById("contadorCarrito");
+  let carrito = 0;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(productos => {
+      console.log(productos);
+      productos.forEach(producto => {
+        const col = document.createElement("div");
+        col.className = "col-md-4 col-sm-12 p-2";
+
+        let precioHTML = "";
+
+        if (producto.EnOferta && producto.PrecioOferta != null) {
+          precioHTML = `
+            <span class="text-danger">$${parseFloat(producto.PrecioOferta).toFixed(2)}</span>
+            <small class="text-muted text-decoration-line-through">$${parseFloat(producto.Precio).toFixed(2)}</small>
+          `;
+        } else {
+          precioHTML = `$${parseFloat(producto.Precio).toFixed(2)}`;
+        }
+
+        col.innerHTML = `
+          <div class="card">
+            <img src="${producto.Imagen}" class="card-img-top" alt="${producto.Nombre}">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">${producto.Nombre}</h5>
+              <p class="card-text">${producto.Descripcion}</p>
+               <p class="fw-bold">${precioHTML}</p>
+              <a href="#" class="btn btn-primary mt-auto agregarCarrito">Agregar al carrito</a>
+            </div>
+          </div>
+        `;
+
+        col.querySelector(".agregarCarrito").addEventListener("click", (e) => {
+          e.preventDefault();
+          carrito++;
+          contadorCarrito.textContent = carrito;
+        });
+
+        contenedor.appendChild(col);
+      });
+    })
+    .catch(error => {
+      console.error("Error al cargar productos:", error);
+      contenedor.innerHTML = '<div class="alert alert-danger">No se pudieron cargar los productos.</div>';
+    });
+</script>
 
 </body>
 </html>
