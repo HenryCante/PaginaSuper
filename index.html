@@ -72,13 +72,10 @@
     <div class="row">
         <!-- Menú de categorías -->
         <div class="col-sm-3 mb-4">
-            <h5>Categorías</h5>
-            <ul class="list-group">
-                <li class="list-group-item">Carnes</li>
-                <li class="list-group-item">Verduras</li>
-                <li class="list-group-item">Frutas</li>
-                <li class="list-group-item">Golosinas</li>
-            </ul>
+          <h5>Categorías</h5>
+            <div class="list-group" id="contenedorCategorias">
+              <!-- Aquí se insertan las categorías -->
+            </div>
         </div>
 
         <!-- Productos -->
@@ -144,6 +141,26 @@
     .catch(error => {
       console.error("Error al cargar productos:", error);
       contenedor.innerHTML = '<div class="alert alert-danger">No se pudieron cargar los productos.</div>';
+    });
+</script>
+<script>
+  const urlcat = "https://backcvbgtmdesa.azurewebsites.net/api/categorias";
+  const cont = document.getElementById("contenedorCategorias");
+
+  fetch(urlcat)
+    .then(response => response.json())
+    .then(categorias => {
+      console.log(categorias);
+      categorias.forEach(categoria => {
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+        li.textContent = categoria.descripcion;
+        cont.appendChild(li);
+      });
+    })
+    .catch(error => {
+      console.error("Error al cargar categorías:", error);
+      cont.innerHTML = '<li class="list-group-item text-danger">No se pudieron cargar las categorías.</li>';
     });
 </script>
 
